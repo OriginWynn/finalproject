@@ -1,0 +1,123 @@
+module divfreq(input CLK, output reg CLK_div);
+reg [24:0] Count;
+always @(posedge CLK)
+begin
+if(Count > 2500)
+begin
+Count <= 25'b0;
+CLK_div <= ~CLK_div;
+end
+else
+Count <= Count + 1'b1;
+end
+endmodule
+module kkken(
+input [3:0] inputpass,
+input [3:0] guess,
+input setmode, guessmode, clear,CLK,
+output reg [0:7] red,
+output reg [0:7] gr,
+output reg [0:7] bl,
+output reg [0:2] ss,
+output reg lock, beep, right,en
+);
+divfreq F0(CLK,CLK_div);
+reg [3:0] password;
+reg check;
+reg count;
+reg sucess;
+reg fail;
+initial 
+	begin
+		check=0;
+		count=0;
+		lock=0;
+		beep=0;
+		right=0;
+		sucess=0;
+		fail=0;
+	end
+	
+  always@(setmode,guessmode,clear)
+    begin
+	   if(clear)
+		  begin
+		  beep=0;
+		  check=0;
+		  right=0;
+		  lock=0;
+        count=0;
+		  sucess=0;
+		  fail=0;
+		  end
+	   else if(setmode && count!=1)
+		   begin
+		    password=inputpass;
+			 lock=1;
+			 check=0;
+			 right=0;
+			 beep=0;
+          count=0;
+			 sucess=0;
+		    fail=0;
+			end
+		else if(guessmode)
+		  begin
+		    if(count!=1 && guess==password && check==0)
+			   begin
+					beep=0;
+					lock=0;
+					check=1;
+					count=0;
+					right=0;
+					sucess=1;
+		         fail=0;
+				end
+				 else if(sucess == 1 && fail == 0)
+					begin
+						beep=0;		
+					end
+			else if(guess!=password && check==0 && count!=1)
+				 begin
+				 	right=1;
+				   beep=1;
+					check=1;
+					lock=1;
+					count=1;
+					sucess=0;
+		         fail=1;
+				 end
+				 else if(fail == 1 && sucess == 0)
+					begin
+						beep=1; 
+					end
+		  end
+	 end
+always @(posedge CLK_div)
+begin
+  reg [0:2]s;
+  if(s==3'b111)
+          s=3'b000;
+  else 
+          s=s+1'b1;
+			 
+  red[0:7]=8'b11111111;
+  gr[0:7]=8'b11111111;
+  bl[0:7]=8'b11111111;
+  ss[0:2]= s;
+  en=1;
+   if(fail==1)
+   begin     
+   if(s==0) red[0:7]= 8'b11111111;
+   if(s==1) red[0:7]= 8'b00001111;
+   if(s==2) red[0:7]= 8'b00000001;
+   if(s==3) red[0:7]= 8'b00001101;
+	if(s==4) red[0:7]= 8'b00001101;
+	if(s==5) red[0:7]= 8'b00000001;
+	if(s==6) red[0:7]= 8'b00001111;
+	if(s==7) red[0:7]= 8'b11111111;
+   end 
+   else red[0:7]=8'b11111111;
+   
+end
+endmodule

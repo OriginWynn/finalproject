@@ -1,6 +1,6 @@
 module divfreq(input CLK, output reg CLK_div);
 reg [24:0] Count;
-always @(posedge CLK)
+always @(posedge CLK)//製造頻率
 begin
 if(Count > 2500)
 begin
@@ -11,7 +11,7 @@ else
 Count <= Count + 1'b1;
 end
 endmodule
-module kkken(
+module kkken(            
 input [3:0] inputpass,
 input [3:0] guess,
 input setmode, guessmode, clear,CLK,
@@ -39,7 +39,7 @@ initial
 		fail=0;
 	end
 	
-  always@(setmode,guessmode,clear)
+  always@(setmode,guessmode,clear)//判斷使用哪個功能
     begin
 	   if(clear)
 		  begin
@@ -52,7 +52,7 @@ initial
 		  sucess=0;
 		  fail=0;
 		  end
-	   else if(setmode && count!=1)
+	   else if(setmode && count!=1)//設定密碼
 		   begin
 		    password=inputpass;
 			 lock=1;
@@ -64,9 +64,9 @@ initial
 			 sucess=0;
 		    fail=0;
 			end
-		else if(guessmode)
+		else if(guessmode))//猜測
 		  begin
-		    if(count!=1 && guess==password && check==0)
+		    if(count!=1 && guess==password && check==0))//猜對
 			   begin
 					beep=0;
 					x=1;
@@ -77,11 +77,11 @@ initial
 					sucess=1;
 		         fail=0;
 				end
-				 else if(sucess == 1 && fail == 0)
+				 else if(sucess == 1 && fail == 0))
 					begin
 						beep=0;		
 					end
-			else if(guess!=password && check==0 && count!=1)
+			else if(guess!=password && check==0 && count!=1))//猜錯
 				 begin
 				 	right=1;
 				   beep=1;
@@ -98,7 +98,7 @@ initial
 					end
 		  end
 	 end
-always @(posedge CLK_div)
+always @(posedge CLK_div))//led的設置(利用頻率觸發
 begin
   reg [0:2]s;
   if(s==3'b111)

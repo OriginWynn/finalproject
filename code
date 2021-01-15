@@ -19,7 +19,7 @@ output reg [0:7] red,
 output reg [0:7] gr,
 output reg [0:7] bl,
 output reg [0:2] ss,
-output reg lock, beep, right,en
+output reg lock, beep, right,en,x
 );
 divfreq F0(CLK,CLK_div);
 reg [3:0] password;
@@ -30,6 +30,7 @@ reg fail;
 initial 
 	begin
 		check=0;
+		x=0;
 		count=0;
 		lock=0;
 		beep=0;
@@ -42,6 +43,7 @@ initial
     begin
 	   if(clear)
 		  begin
+		  x=0;
 		  beep=0;
 		  check=0;
 		  right=0;
@@ -56,6 +58,7 @@ initial
 			 lock=1;
 			 check=0;
 			 right=0;
+			 x=0;
 			 beep=0;
           count=0;
 			 sucess=0;
@@ -66,6 +69,7 @@ initial
 		    if(count!=1 && guess==password && check==0)
 			   begin
 					beep=0;
+					x=1;
 					lock=0;
 					check=1;
 					count=0;
@@ -84,6 +88,7 @@ initial
 					check=1;
 					lock=1;
 					count=1;
+					x=0;
 					sucess=0;
 		         fail=1;
 				 end
@@ -116,8 +121,20 @@ begin
 	if(s==5) red[0:7]= 8'b00000001;
 	if(s==6) red[0:7]= 8'b00001111;
 	if(s==7) red[0:7]= 8'b11111111;
-   end 
+   end
    else red[0:7]=8'b11111111;
-   
+if(sucess==1)
+   begin
+   red[0:7]= 8'b11111111;
+   if(s==0) gr[0:7]= 8'b11111111;
+   if(s==1) gr[0:7]= 8'b11110000;
+   if(s==2) gr[0:7]= 8'b10000000;
+   if(s==3) gr[0:7]= 8'b10110000;
+	if(s==4) gr[0:7]= 8'b10110000;
+	if(s==5) gr[0:7]= 8'b10010000;
+	if(s==6) gr[0:7]= 8'b11110000;
+	if(s==7) gr[0:7]= 8'b11111111;
+   end 
+   else gr[0:7]   =8'b11111111;
 end
 endmodule
